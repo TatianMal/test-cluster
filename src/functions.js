@@ -1,12 +1,12 @@
+import util from 'util';
+
 import Cluster from './cluster.js';
 
 function getFieldNumber(min, max) {
   return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
 
-function createField(fieldSize) {
-  const min = 0;
-  const max = 3;
+function createField(fieldSize, min = 0, max = 3) {
   const field = [];
   for (let i = 0; i < fieldSize; i += 1) {
     const row = [];
@@ -22,6 +22,10 @@ function printField(field) { // void
   console.log(field);
 }
 
+function printClusters(clusters) {
+  console.log(util.inspect(clusters, false, 3));
+}
+
 function getNeighbourCoords(currentCoords, fieldSize) {
   // соседними могут быть максимум 4 клетки
   const coords = [
@@ -34,29 +38,28 @@ function getNeighbourCoords(currentCoords, fieldSize) {
   return result;
 }
 
-function findCluster({
-  currentCoords, field, fieldSize, handledCells, cluster,
+function findClusterCoords({
+  currentCoords, field, fieldSize, handledCells, currentNumber, coordsToCluster = [],
 }) {
   if (handledCells[currentCoords[0]][currentCoords[1]]) {
-    return cluster;
+    return coordsToCluster;
   }
-  const currentNumber = field[currentCoords[0]][currentCoords[1]];
-  cluster.coords.push(currentCoords);
+  coordsToCluster.push(currentCoords);
   // eslint-disable-next-line no-param-reassign
   handledCells[currentCoords[0]][currentCoords[1]] = true;
   const neighbourCoords = getNeighbourCoords(currentCoords, fieldSize);
   const sameNumbersCoords = neighbourCoords.filter((pair) => field[pair[0]][pair[1]] === currentNumber);
 
   if (sameNumbersCoords.length === 0) {
-    return cluster;
+    return coordsToCluster;
   }
   // eslint-disable-next-line no-restricted-syntax
   for (const coords of sameNumbersCoords) {
-    findCluster({
-      currentCoords: coords, field, fieldSize, handledCells, cluster,
+    findClusterCoords({
+      currentCoords: coords, field, fieldSize, handledCells, currentNumber, coordsToCluster,
     });
   }
-  return cluster;
+  return coordsToCluster;
 }
 
 function findClusters(field, clusterMinSize) {
@@ -75,12 +78,10 @@ function findClusters(field, clusterMinSize) {
       }
       const currentCoords = [i, j];
       const currentCluster = new Cluster({ number: field[currentCoords[0]][currentCoords[1]] });
-
-      findCluster({
-        currentCoords, field, handledCells, fieldSize, cluster: currentCluster,
+      currentCluster.coords = findClusterCoords({
+        currentCoords, field, handledCells, fieldSize, currentNumber: currentCluster.number,
       });
       if (currentCluster.getSize() < clusterMinSize) {
-        // Cluster сам уничтожится при выходе из области видимости?
         continue;
       }
       clusters.push(currentCluster);
@@ -93,5 +94,6 @@ export {
   getNeighbourCoords,
   createField,
   printField,
+  printClusters,
   findClusters,
 };

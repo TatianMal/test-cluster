@@ -17,6 +17,7 @@
         "no-console": 0,
         "linebreak-style": 0,
         "no-continue": 0,
+        "import/extensions": 0,
         "max-len": ["error", { "code": 120 }],
         "jest/no-disabled-tests": "warn",
         "jest/no-focused-tests": "error",

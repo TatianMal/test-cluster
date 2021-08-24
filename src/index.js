@@ -1,3 +1,4 @@
+// @ts-check
 import {
     createField,
     printField,
@@ -7,4 +8,5 @@ import {
 const fieldSize = 5; // write func
 const clusterMinSize = 4; // write func
 const field = createField(fieldSize);
-printField(field)
+printField(field);
+findClusters(field, clusterMinSize);

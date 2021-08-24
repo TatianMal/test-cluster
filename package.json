@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --colors"
   },
   "type": "module",
   "repository": {
@@ -17,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/TatianMal/test-cluster/issues"
   },
-  "homepage": "https://github.com/TatianMal/test-cluster#readme"
+  "homepage": "https://github.com/TatianMal/test-cluster#readme",
+  "dependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "babel-jest": "^27.0.6",
+    "jest": "^27.0.6"
+  }
 }

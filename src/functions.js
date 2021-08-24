@@ -1,5 +1,7 @@
 // @ts-check
 
+import Cluster from './cluster.js';
+
 function getFieldNumber(min, max) {
     return Math.floor(Math.random() * (max + 1 - min)) + min;
 };
@@ -34,13 +36,54 @@ function getNeighbourCoords(currentCoords, fieldSize) {
     return result;
 }
 
+function findClusterFromCoord({currentCoords, field, fieldSize, handledCellList, cluster }) { // return cluster
+    if (handledCellList[currentCoords[0]][currentCoords[1]]) {
+        return cluster
+    }
+    const currentNumber = field[currentCoords[0]][currentCoords[1]]
+    cluster.coords.push(currentCoords)
+    handledCellList[currentCoords[0]][currentCoords[1]] = true
+    let neighbourCoords = getNeighbourCoords(currentCoords, fieldSize);
+    let sameNumbersCoords = neighbourCoords.filter((pair) => field[pair[0]][pair[1]] === currentNumber);
+    
+    if (sameNumbersCoords.length === 0) {
+        return cluster
+    }
+    // reduce?
+    for (const coords of sameNumbersCoords) {
+        findClusterFromCoord({currentCoords: coords, field, fieldSize, handledCellList, cluster })
+    }
+    return cluster
+}
+
 function findClusters(field, clusterMinSize) {
     let clusters = [];
-    let currentCoords = [0, 0];
-    let currentNumber = field[currentCoords[0]][currentCoords[1]];
-    let neighbourCoords = getNeighbourCoords(currentCoords, field.length);
-    let neighbourNumbers = neighbourCoords.map((pair) => field[pair[0]][pair[1]]);
-    console.log(neighbourCoords, neighbourNumbers);
+    const fieldSize = field.length;
+    const handledCellList = [];
+    for (let i = 0; i < fieldSize; i++) {
+        const row = new Array(fieldSize);
+        row.fill(false, 0, fieldSize)
+        handledCellList.push(row)
+    }
+    for (let i = 0; i < fieldSize; i++) {
+        for (let j = 0; j < fieldSize; j++) {
+            if (handledCellList[i][j]) {
+                continue
+            }
+            let currentCoords = [i, j];
+            let currentNumber = field[currentCoords[0]][currentCoords[1]];
+            const currentCluster = new Cluster();
+            currentCluster.number = currentNumber;
+            
+            findClusterFromCoord({ currentCoords, field, handledCellList, fieldSize, cluster: currentCluster})
+            console.log('tempCluster', currentCluster)
+            if (currentCluster.getSize() < clusterMinSize) {
+                // Cluster сам уничтожится при выходе из области видимости?
+                continue
+            }
+            clusters.push(currentCluster)
+        }
+    }
     return clusters;
 };
 

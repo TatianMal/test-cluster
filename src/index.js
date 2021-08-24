@@ -1,9 +1,9 @@
 // @ts-check
 import util from 'util';
 import {
-    createField,
-    printField,
-    findClusters,
+  createField,
+  printField,
+  findClusters,
 } from './functions.js';
 
 const fieldSize = 5;

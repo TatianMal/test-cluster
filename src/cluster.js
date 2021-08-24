@@ -1,14 +1,16 @@
 /**
- * 
+ *
  */
 class Cluster {
-    constructor () {
-        this.coords = [];
-        this.number = undefined;
-    }
-    getSize () {
-        return this.coords.length;
-    }
+  constructor({ number, coords = [] }) {
+    this.number = number;
+    this.coords = coords;
+  }
+
+  // addCoords() - to hide coords type
+  getSize() {
+    return this.coords.length;
+  }
 }
 
-export default Cluster
+export default Cluster;

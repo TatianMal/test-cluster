@@ -1,5 +1,4 @@
 // @ts-check
-
 import Cluster from './cluster.js';
 
 function getFieldNumber(min, max) {
@@ -76,7 +75,6 @@ function findClusters(field, clusterMinSize) {
             currentCluster.number = currentNumber;
             
             findClusterFromCoord({ currentCoords, field, handledCellList, fieldSize, cluster: currentCluster})
-            console.log('tempCluster', currentCluster)
             if (currentCluster.getSize() < clusterMinSize) {
                 // Cluster сам уничтожится при выходе из области видимости?
                 continue

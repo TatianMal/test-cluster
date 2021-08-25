@@ -18,11 +18,14 @@ function createField(fieldSize, min = 0, max = 3) {
   return field;
 }
 
-function printField(field) { // void
-  console.log(field);
+function printField(field, clusterMinSize) {
+  console.log('Поле:');
+  console.log(util.inspect(field, false));
+  console.log(`Минимальный размер кластера: ${clusterMinSize}`);
 }
 
 function printClusters(clusters) {
+  console.log('Кластеры:');
   console.log(util.inspect(clusters, false, 3));
 }
 
@@ -39,12 +42,12 @@ function getNeighbourCoords(currentCoords, fieldSize) {
 }
 
 function findClusterCoords({
-  currentCoords, field, fieldSize, handledCells, currentNumber, coordsToCluster = [],
+  currentCoords, field, fieldSize, handledCells, currentNumber,
 }) {
   if (handledCells[currentCoords[0]][currentCoords[1]]) {
-    return coordsToCluster;
+    return [];
   }
-  coordsToCluster.push(currentCoords);
+  const coordsToCluster = [currentCoords];
   // eslint-disable-next-line no-param-reassign
   handledCells[currentCoords[0]][currentCoords[1]] = true;
   const neighbourCoords = getNeighbourCoords(currentCoords, fieldSize);
@@ -55,13 +58,14 @@ function findClusterCoords({
   }
   // eslint-disable-next-line no-restricted-syntax
   for (const coords of sameNumbersCoords) {
-    findClusterCoords({
-      currentCoords: coords, field, fieldSize, handledCells, currentNumber, coordsToCluster,
-    });
+    coordsToCluster.push(...findClusterCoords({
+      currentCoords: coords, field, fieldSize, handledCells, currentNumber,
+    }));
   }
   return coordsToCluster;
 }
-
+// цикл в цикле (пусть и неполный в зависимости от случая) + рекурсия.
+// Если много мелких кластеров, то пройдутся полные циклы. Если один крупный - стек вызовов в теории может закончиться
 function findClusters(field, clusterMinSize) {
   const clusters = [];
   const fieldSize = field.length;

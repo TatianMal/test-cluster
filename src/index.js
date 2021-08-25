@@ -10,5 +10,5 @@ const fieldSize = 5;
 const clusterMinSize = 4;
 const field = createField(fieldSize);
 const clusters = findClusters(field, clusterMinSize);
-printField(field);
+printField(field, clusterMinSize);
 printClusters(clusters);
